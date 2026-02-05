@@ -193,28 +193,7 @@ namespace RimGPT
 
 		public static void UpdateVoiceInformation()
 		{
-			TTS.voices = [];
-			if (RimGPTMod.Settings.azureSpeechKey == "" || RimGPTMod.Settings.azureSpeechRegion == "")
-				return;
-
-			Tools.SafeAsync(async () =>
-			{
-				TTS.voices = await TTS.DispatchFormPost<Voice[]>($"{TTS.APIURL}/voices/list", null, true, null);
-				foreach (var persona in RimGPTMod.Settings.personas)
-				{
-					var voiceLanguage = Tools.VoiceLanguage(persona);
-					var currentVoice = Voice.From(persona.azureVoice);
-					if (currentVoice != null && currentVoice.LocaleName.Contains(voiceLanguage) == false)
-					{
-						currentVoice = TTS.voices
-							.Where(voice => voice.LocaleName.Contains(voiceLanguage))
-							.OrderBy(voice => voice.DisplayName)
-							.FirstOrDefault();
-						persona.azureVoice = currentVoice?.ShortName ?? "";
-						persona.azureVoiceStyle = "default";
-					}
-				}
-			});
+			// LocalAI uses a fixed Piper voice model, so there is no remote voice list to update.
 		}
 	}
 }
