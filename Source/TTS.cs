@@ -23,7 +23,7 @@ namespace RimGPT
 	public class TTS
 	{
 		public const string LocalAiBaseUrl = "http://192.168.1.79:8080";
-		public const string LocalAiTtsModel = "voice-en-GB-cori-high";
+		public const string LocalAiTtsModel = "voice-en_GB-cori-high";
 		public static string LocalAiSpeechEndpoint => $"{LocalAiBaseUrl}/tts";
 
 		private static AudioSource audioSource = null;
