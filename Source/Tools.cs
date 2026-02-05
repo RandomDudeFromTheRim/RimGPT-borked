@@ -220,17 +220,6 @@ namespace RimGPT
 			});
 		}
 
-		public static string VoiceLanguage(Persona persona)
-		{
-			var language = persona.azureVoiceLanguage;
-			if (language == "-")
-				language = LanguageDatabase.activeLanguage.FriendlyNameEnglish;
-			var idx = language.IndexOf(" ");
-			if (idx < 0)
-				return language;
-			return language.Substring(0, idx);
-		}
-
 		public static string PersonalityLanguage(Persona persona)
 		{
 			var language = persona.personalityLanguage;
@@ -257,17 +246,6 @@ namespace RimGPT
 		}
 
 		public static string NameAndType(this Pawn pawn) => $"{pawn.Type()} '{pawn.LabelShortCap}'";
-
-		public static string ApplyVoiceStyle(this string text, Persona persona)
-		{
-			var voiceStyle = "funny";
-
-			var value = VoiceStyle.From(persona.azureVoiceStyle)?.Value;
-			if (value != null && value != "default" && value != "chat" && value.Contains("-") == false && value.Contains("_") == false)
-				voiceStyle = $"very {value}";
-
-			return text.Replace("{VOICESTYLE}", voiceStyle);
-		}
 
 		public static string RemovePrefix(this string text, string prefix)
 		{

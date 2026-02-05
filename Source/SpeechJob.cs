@@ -30,8 +30,7 @@ namespace RimGPT
 					completed = true;
 					return;
 				}
-				if (RimGPTMod.Settings.azureSpeechKey != "" && RimGPTMod.Settings.azureSpeechRegion != "")
-					audioClip = await TTS.AudioClipFromAzure(persona, $"{TTS.APIURL}/v1", spokenText, errorCallback);
+				audioClip = await TTS.AudioClipFromLocalAi(persona, spokenText, errorCallback);
 				completed = true;
 			});
 		}
@@ -52,7 +51,7 @@ namespace RimGPT
 			}
 			if (!string.IsNullOrEmpty(spokenText) && persona != null) Personas.Add($"{persona.name} said: {spokenText}", 1);
 
-			var showText = RimGPTMod.Settings.showAsText || RimGPTMod.Settings.azureSpeechRegion == "" || RimGPTMod.Settings.azureSpeechKey == "";
+			var showText = RimGPTMod.Settings.showAsText || audioClip == null;
 			if (showText)
 				Personas.currentText = persona == null ? spokenText : $"{persona.name}: {spokenText}";
 

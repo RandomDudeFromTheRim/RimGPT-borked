@@ -20,9 +20,9 @@ namespace RimGPT
 		{
             // Mod Help
             { HelpType.Default, helpText},
-				{ HelpType.ModHelp, @"This mod utilizes two types of APIs: Text-to-Speech services through Microsoft Azure and AI chat services. For AI chat services, this mod supports a variety of AI providers, both externally hosted, such as OpenAI, OpenRouter and Cohere, as well as locally hosted using Ollama, LocalAI or any other locally installed models that support API.
+				{ HelpType.ModHelp, @"This mod utilizes two types of APIs: Text-to-Speech services through LocalAI (Piper backend) and AI chat services. For AI chat services, this mod supports a variety of AI providers, both externally hosted, such as OpenAI, OpenRouter and Cohere, as well as locally hosted using Ollama, LocalAI or any other locally installed models that support API.
 
-You must provide the necessary API keys yourself, as the overall demand for this free mod would be too costly. Your task is to create the required accounts, connect them with a credit card (if necessary), and add a minimum amount to their balance. If you are going to use a locally hosted AI model, you still need to setup a Microsoft Azure account for Text-to-Speech services.
+You must provide the necessary API keys yourself for chat providers, as the overall demand for this free mod would be too costly. Your task is to create the required accounts, connect them with a credit card (if necessary), and add a minimum amount to their balance. For Text-to-Speech, the mod is configured for a local LocalAI instance and does not require authentication.
 
 To set up the mod, please navigate to the AI Configuration menu by clicking on the 'AI Config' button. There, you can get further instructions on each AI Provider, add your API keys, and set up your local models." },
 
@@ -69,13 +69,9 @@ To get a full list of models, visit https://docs.together.ai/docs/inference-mode
 				{ HelpType.OtherLocal,"" },
 
             // Voice Services
-            { HelpType.Azure, @"This mod uses Microsoft Azure's Cognitive Services to enable TTS (Text-to-Speech) through their Speech service API. Although account creation requires a credit card, 500,000 characters per month are free.
+            { HelpType.Azure, @"This mod uses LocalAI with the Piper backend to enable Text-to-Speech (TTS). The TTS endpoint is configured for a local LocalAI instance and does not require authentication.
 
-To begin, go to https://azure.microsoft.com/en-gb/free/cognitive-services/ and click 'Start free'. Sign up or log in using your Microsoft or GitHub account.
-
-Locate 'Speech Services' and configure the settings. Create a resource group and a subscription (maybe use 'Budget' to set a monthly cost limit).
-
-Within the resource group, find 'Keys and Endpoint' where you can create a key and a location (e.g., centralus). Enter both into the mod settings." },
+To begin, make sure LocalAI is running on your network and that the Piper model 'voice-en-GB-cori-high' is available. The mod will send requests to the configured LocalAI base URL and will use the fixed voice model for all personas." },
 
             // Other
             { HelpType.BaseUrl,"The Base URL is the core web address for an AI API provider, serving as the starting point for all API requests. You shouldn't need to change this unless you are using an alternate provider than what is built into the mod." },
@@ -85,15 +81,15 @@ Within the resource group, find 'Keys and Endpoint' where you can create a key a
 
 		Vector2 scrollPosition;
 
-		const string helpText = @"This mod utilizes two external APIs: openai.com for ChatGPT and Microsoft Azure for Text-to-Speech services. You must provide both keys yourself, as the overall demand for this free mod would be too costly. Your task is to create both accounts, connect them with a credit card and add a minimum amount to their balance.
+		const string helpText = @"This mod utilizes two external APIs: openai.com for ChatGPT and a local LocalAI instance for Text-to-Speech services. You must provide any chat provider keys yourself, as the overall demand for this free mod would be too costly. Your task is to create both accounts, connect them with a credit card and add a minimum amount to their balance.
 
 # OpenAI
 
 To enable ChatGPT functionality, visit https://platform.openai.com/account/api-keys and create a new secret key. Paste the key into the mod settings. If you're unable to create an account, try multiple times. Using API keys does in fact require a paid membership but its costs are minimal. For more information, refer to https://platform.openai.com/docs/api-reference/authentication and https://platform.openai.com/account/usage.
 
-# Microsoft Azure
+# LocalAI (TTS)
 
-This mod uses Microsoft Azure's Cognitive Services to enable TTS (Text-to-Speech) through their Speech service API. Although account creation requires a credit card, 500,000 characters per month are free. To begin, go to https://azure.microsoft.com/en-gb/free/cognitive-services/ and click 'Start free'. Sign up or log in using your Microsoft or GitHub account. Locate 'Speech Services' and configure the settings. Create a resource group and a subscription (maybe use 'Budget' to set a monthly cost limit). Within the resource group, find 'Keys and Endpoint' where you can create a key and a location (e.g., centralus). Enter both into the mod settings.";
+This mod uses LocalAI with the Piper backend for TTS (Text-to-Speech). Ensure your LocalAI instance is running and has the 'voice-en-GB-cori-high' model available.";
 
 		public override Vector2 InitialSize => dialogSize;
 

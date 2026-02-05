@@ -86,7 +86,7 @@ namespace RimGPT
 			$"Limit NewHistoricalKeyEvents to no more than {currentPersona.historyMaxWordCount} words.\n",
 
 			// Encourages the AI to consider how its responses would sound when spoken, ensuring clarity and accessibility.
-			$"When constructing the 'ResponseText', consider vocal clarity and pacing so that it is easily understandable when spoken by Microsoft Azure Speech Services.\n",
+			$"When constructing the 'ResponseText', consider vocal clarity and pacing so that it is easily understandable when spoken by the configured Text-to-Speech system.\n",
 			// Prioritizes sources of information.
 			$"Update prioritization: 1. ActivityFeed, 2. Additional Fields (as context).\n",
 			// Further reinforces the AI's specific personality by resynthesizing different pieces of information and storing it in its own history
