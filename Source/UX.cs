@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Verse;
 using static RimGPT.Dialog_Help;
@@ -142,82 +141,6 @@ namespace RimGPT
 				LanguageChoiceMenu(languages, itemFunc, action);
 		}
 
-		public static void Voices(this Listing_Standard list, Persona persona, float width, int column)
-		{
-			var rect = list.GetRect(ButtonHeight);
-			list.Gap(-ButtonHeight);
-			rect.width = width;
-			rect.x += column * (width + 20);
-
-			var currentVoice = Voice.From(persona.azureVoice);
-			if (Widgets.ButtonText(rect, currentVoice?.DisplayName ?? ""))
-			{
-				if (TTS.voices.NullOrEmpty())
-					return;
-
-				var options = new List<FloatMenuOption>();
-
-				void AddVoice(Voice voice)
-				{
-					string country = null;
-					var localeName = voice.LocaleName;
-					var idx = localeName.LastIndexOf('(');
-					if (idx >= 0 && localeName.EndsWith(")"))
-						country = localeName.Substring(idx);
-					var floatMenuOption = new FloatMenuOption(voice.DisplayName + (country != null ? $" {country}" : ""), () =>
-					{
-						persona.azureVoice = voice.ShortName;
-						persona.azureVoiceStyle = VoiceStyle.Values[0].Value;
-					});
-					var tooltip = $"{voice.Gender}, {voice.WordsPerMinute} Words/min, {voice.LocaleName}";
-					floatMenuOption.tooltip = new TipSignal?(tooltip);
-					options.Add(floatMenuOption);
-				}
-
-				var voices = TTS.voices.Where(voice => voice.LocaleName.Contains(Tools.VoiceLanguage(persona))).OrderBy(voice => voice.DisplayName);
-				var voicesWithStyles = voices.Where(voice => voice.StyleList.NullOrEmpty() == false);
-				foreach (var voice in voicesWithStyles)
-					AddVoice(voice);
-				if (voicesWithStyles.Any())
-					options.Add(new FloatMenuOption("-", () => { }));
-				foreach (var voice in voices.Where(voice => voice.StyleList.NullOrEmpty()))
-					AddVoice(voice);
-				Find.WindowStack.Add(new FloatMenu(options));
-			}
-		}
-
-		public static bool HasVoiceStyles(Persona persona)
-		{
-			var currentVoice = Voice.From(persona.azureVoice);
-			var availableStyles = currentVoice?.StyleList;
-			return availableStyles.NullOrEmpty() == false;
-		}
-
-		public static void VoiceStyles(this Listing_Standard list, Persona persona, float width, int column)
-		{
-			var rect = list.GetRect(ButtonHeight);
-			list.Gap(-ButtonHeight);
-			rect.width = width;
-			rect.x += column * (width + 20);
-
-			var currentVoice = Voice.From(persona.azureVoice);
-			var availableStyles = currentVoice?.StyleList;
-			if (availableStyles.NullOrEmpty())
-				availableStyles = ["default"];
-			var currentStyle = VoiceStyle.From(persona.azureVoiceStyle);
-			if (Widgets.ButtonText(rect, currentStyle?.Name ?? ""))
-			{
-				var options = new List<FloatMenuOption>();
-				foreach (var styleName in availableStyles)
-				{
-					var style = VoiceStyle.From(styleName);
-					var floatMenuOption = new FloatMenuOption(style.Name, () => persona.azureVoiceStyle = style.Value);
-					if (style.Tooltip != null)
-						floatMenuOption.tooltip = new TipSignal?(style.Tooltip);
-					options.Add(floatMenuOption);
-				}
-				Find.WindowStack.Add(new FloatMenu(options));
-			}
-		}
+		// LocalAI uses a fixed voice model, so there are no per-persona voice selectors.
 	}
 }

@@ -53,12 +53,10 @@ namespace RimGPT
 		public List<UserApiConfig> userApiConfigs = [];
 		public bool enabled = true;
 
-		// Azure Settings
-		public string azureSpeechKey = "";
-		public string azureSpeechRegion = "";
+		// TTS Settings
 		public float speechVolume = 4f;
 		public bool showAsText = true;
-		public long charactersSentAzure = 0;
+		public long charactersSentTts = 0;
 
 		// for backwards compatibility --------
 		public string azureVoiceLanguage;
@@ -134,11 +132,9 @@ namespace RimGPT
 			// API Settings
 			Scribe_Collections.Look(ref userApiConfigs, "userApiConfigs", LookMode.Deep);
 
-			Scribe_Values.Look(ref azureSpeechKey, "azureSpeechKey");
-			Scribe_Values.Look(ref azureSpeechRegion, "azureSpeechRegion");
 			Scribe_Values.Look(ref speechVolume, "speechVolume", 4f);
 			Scribe_Values.Look(ref showAsText, "showAsText", true);
-			Scribe_Values.Look(ref charactersSentAzure, "charactersSentAzure", 0);
+			Scribe_Values.Look(ref charactersSentTts, "charactersSentAzure", 0);
 
 			// Thoughts & Mood Insight settings
 			Scribe_Values.Look(ref reportColonistThoughts, "reportColonistThoughts", defaultValue: true);
@@ -248,7 +244,7 @@ namespace RimGPT
 			}
 		}
 
-		public bool IsConfigured => userApiConfigs.Any(a => a.Active) && ((azureSpeechKey?.Length > 0 && azureSpeechRegion?.Length > 0) || showAsText);
+		public bool IsConfigured => userApiConfigs.Any(a => a.Active);
 
 		public Vector2 scrollPosition = Vector2.zero;
 		public static Persona selected = null;
@@ -316,17 +312,9 @@ namespace RimGPT
 			}
 			list.Gap(10f);
 
-			list.Label("FFFF00", "Azure - Speech Services", $"Chars Sent: {Tools.FormatNumber(charactersSentAzure)}", "Total characters sent while using Azure Speech Services.");
-			var prevRegion = azureSpeechRegion;
-			list.TextField(ref azureSpeechRegion, "Region");
-			if (azureSpeechRegion != prevRegion)
-				Personas.UpdateVoiceInformation();
-			list.Gap(6f);
-			var prevKey = azureSpeechKey;
-			list.TextField(ref azureSpeechKey, "API Key (paste only)", true, () => azureSpeechKey = "");
-			if (azureSpeechKey != "" && azureSpeechKey != prevKey && azureSpeechRegion.NullOrEmpty() == false)
-				TTS.TestKey(new Persona(), () => Personas.UpdateVoiceInformation());
-
+			list.Label("FFFF00", "LocalAI - Speech Services", $"Chars Sent: {Tools.FormatNumber(charactersSentTts)}", "Total characters sent while using LocalAI Speech Services.");
+			list.Label("FFFFFF", "LocalAI Endpoint", TTS.LocalAiBaseUrl, "The LocalAI base URL for TTS requests.");
+			list.Label("FFFFFF", "Voice Model", TTS.LocalAiTtsModel, "The fixed Piper model used for text-to-speech.");
 			list.Gap(16f);
 
 			list.Label("FFFF00", "Miscellaneous");
@@ -337,7 +325,7 @@ namespace RimGPT
 			if (Widgets.ButtonText(rect, "Reset Stats"))
 			{
 				charactersSentOpenAI = 0;
-				charactersSentAzure = 0;
+				charactersSentTts = 0;
 			}
 
 			list.NewColumn();
@@ -441,19 +429,10 @@ namespace RimGPT
 
 				var buttonWidth = (rect.width - 40) / 3; // Spacing between buttons is 20, hence 40 for two spaces.
 
-				list.Languages(LanguageDatabase.AllLoadedLanguages, selected.azureVoiceLanguage, l => l.DisplayName, l =>
-				{
-					selected.azureVoiceLanguage = l == null ? "-" : l.FriendlyNameEnglish;
-					Personas.UpdateVoiceInformation();
-				}, buttonWidth, 0);
-				list.Voices(selected, buttonWidth, 1);
-				if (UX.HasVoiceStyles(selected))
-					list.VoiceStyles(selected, buttonWidth, 2);
+				list.Label("FFFFFF", "TTS Voice", TTS.LocalAiTtsModel, "LocalAI uses a single fixed voice model for all personas.");
 				list.Gap(30f);
 
 				list.Gap(16f);
-
-				list.Slider(ref selected.azureVoiceStyleDegree, 0f, 2f, f => $"Style degree: {f.ToPercentage(false)}", 0.01f);
 				list.Slider(ref selected.speechRate, -0.5f, 0.5f, f => $"Speech rate: {f.ToPercentage()}", 0.01f);
 				list.Slider(ref selected.speechPitch, -0.5f, 0.5f, f => $"Speech pitch: {f.ToPercentage()}", 0.01f);
 
