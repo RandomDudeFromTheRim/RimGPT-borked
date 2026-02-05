@@ -24,7 +24,7 @@ namespace RimGPT
 	{
 		public const string LocalAiBaseUrl = "http://192.168.1.79:8080";
 		public const string LocalAiTtsModel = "voice-en-GB-cori-high";
-		public static string LocalAiSpeechEndpoint => $"{LocalAiBaseUrl}/v1/audio/speech";
+		public static string LocalAiSpeechEndpoint => $"{LocalAiBaseUrl}/tts";
 
 		private static AudioSource audioSource = null;
 		private static readonly object audioSourceLock = new();
@@ -63,7 +63,7 @@ namespace RimGPT
 				model = LocalAiTtsModel,
 				input = text,
 				backend = "piper",
-				response_format = "wav"
+				// LocalAI's /tts endpoint responds with audio data directly.
 			};
 			var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload));
 			using var request = new UnityWebRequest(LocalAiSpeechEndpoint, "POST");
